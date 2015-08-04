@@ -1,0 +1,30 @@
+library(XML) # Extract XML
+
+library(reshape2) # 
+
+getUrls <- function(y1,y2){
+  root='http://www.calrecycle.ca.gov/LGCentral/Reports/DiversionProgram/JurisdictionDiversionDetail.aspx?JurisdictionID='
+  urls <- NULL
+  for (year in y1:y2){
+    for (jur_id in 1:2){
+      
+      urls <- c(urls,(paste(root, jur_id , '&Year=' , year , sep="")))
+    }
+  }
+  return(urls)
+}
+# call function to generate urls
+PMI <- data.frame()
+urls <- getUrls(y1=2007,y2=2007)
+
+
+#get data for each of them and store that data
+
+#results=NULL
+for (url in urls){
+  ##rawPMI <- readHTMLTable('http://www.calrecycle.ca.gov/LGCentral/Reports/DiversionProgram/JurisdictionDiversionDetail.aspx?JurisdictionID=1&Year=2007')
+  rawPMI <- readHTMLTable(url)
+  LoadPMI <- data.frame(rawPMI[[1]], rawPMI[[3]])
+  LoadPMI <- cbind(LoadPMI,'2007')
+  PMI <- rbind(PMI,LoadPMI)
+}
